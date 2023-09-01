@@ -13,5 +13,25 @@ services:
     volumes:
       - ./app:/app # map directories from our system to container two-way mapping (automatically update code in container when code on local machine changed, or the other way around)
     command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000"
+      sh -c "python manage.py wait_for_db &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=changeme
+    depends_on: # specify dependencies between services
+      - db
 
+  db:
+    image: postgres:13-alpine # use postgres image from docker hub
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data # map volumes to persist data
+    environment: # set environment variables; set initial database configuration for new db service
+      - POSTGRES_DB=devdb
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=changeme
+
+volumes:
+  dev-db-data:
