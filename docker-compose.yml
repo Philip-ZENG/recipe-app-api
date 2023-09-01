@@ -1,0 +1,17 @@
+# specify docker-compose file syntax version
+version: "3.9"
+
+# set up services (especially useful when we want to run multiple container at the same time)
+services:
+  app:
+    build:
+      context: .
+      args:
+        - DEV=true
+    ports:
+      - "8000:8000" # map port 8000 of the container to host machine
+    volumes:
+      - ./app:/app # map directories from our system to container two-way mapping (automatically update code in container when code on local machine changed, or the other way around)
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
+

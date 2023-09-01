@@ -1,0 +1,18 @@
+# Exclude the files that docker will not use
+# Will not copy these files when doing the copy step
+# Git (exclude git history)
+.git
+.gitignore
+
+# Docker
+.docker
+
+# Python cache
+app/__pycache__/
+app/*/__pycache__/
+app/*/*/__pycache__/
+app/*/*/*/__pycache__/
+# local virtual environment
+.env/
+.venv/
+venv/
