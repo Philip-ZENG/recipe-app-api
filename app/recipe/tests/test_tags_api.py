@@ -15,13 +15,16 @@ from recipe.serializers import TagSerializer
 
 TAGS_URL = reverse('recipe:tag-list')
 
+
 def detail_url(tag_id):
     """Create and return a tag detail URL."""
     return reverse('recipe:tag-detail', args=[tag_id])
 
+
 def create_user(email='user@example.com', password='test123'):
     """Create and return a new user."""
     return get_user_model().objects.create_user(email, password)
+
 
 class PublicTagsApiTests(TestCase):
     """Test unauthenticated tags API access."""
@@ -34,6 +37,7 @@ class PublicTagsApiTests(TestCase):
         response = self.client.get(TAGS_URL)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
 
 class PrivateTagsApiTests(TestCase):
     """Test the authenticated API requests."""
@@ -51,7 +55,7 @@ class PrivateTagsApiTests(TestCase):
         response = self.client.get(TAGS_URL)
 
         tags = Tag.objects.all().order_by('-name')
-        serializer = TagSerializer(tags, many=True) # list of objects
+        serializer = TagSerializer(tags, many=True)  # list of objects
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
 
@@ -64,7 +68,7 @@ class PrivateTagsApiTests(TestCase):
         response = self.client.get(TAGS_URL)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1) # only one tag
+        self.assertEqual(len(response.data), 1)  # only one tag
         self.assertEqual(response.data[0]['name'], tag.name)
         self.assertEqual(response.data[0]['id'], tag.id)
 
@@ -79,16 +83,16 @@ class PrivateTagsApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         tag.refresh_from_db()
-        self.assertEqual(tag.name, payload['name']) # name updated
-        self.assertEqual(tag.user, self.user) # user unchanged
+        self.assertEqual(tag.name, payload['name'])  # name updated
+        self.assertEqual(tag.user, self.user)  # user unchanged
 
     def test_delete_tag(self):
         """Test deleting a tag."""
         tag = Tag.objects.create(user=self.user, name='Old Tag')
 
         url = detail_url(tag.id)
-        res = self.client.delete(url) # delete tag request
+        res = self.client.delete(url)  # delete tag request
 
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
-        tags = Tag.objects.filter(user=self.user) # get all tags bined to user
-        self.assertFalse(tags.exists()) # no tags found
+        tags = Tag.objects.filter(user=self.user)  # get all tags bined to user
+        self.assertFalse(tags.exists())  # no tags found

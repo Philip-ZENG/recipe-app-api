@@ -1,8 +1,10 @@
 """
 Serializers for the user API Views.
-serialization (or serialisation) is the process of translating a data structure or
-object state into a format (e.g. yaml,json) that can be stored or transmitted and reconstructed later.
-e.g. Convert a JSON input from API, into a Python object/ Django model or vice versa.
+serialization (or serialisation) is the process of translating a
+data structure or object state into a format (e.g. yaml,json) that
+can be stored or transmitted and reconstructed later.
+e.g. Convert a JSON input from API, into a Python object/
+Django model or vice versa.
 """
 from django.contrib.auth import (
     get_user_model,

@@ -15,8 +15,9 @@ class IngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ingredient
-        fields = ['id', 'name'] # the fields we want to make accessible
+        fields = ['id', 'name']  # the fields we want to make accessible
         read_only_fields = ['id']
+
 
 class TagSerializer(serializers.ModelSerializer):
     """Serializer for tag objects."""
@@ -26,9 +27,11 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
         read_only_fields = ['id']
 
+
 class RecipeSerializer(serializers.ModelSerializer):
     """Serializers for recipes."""
-    tags = TagSerializer(many=True, required=False) # many=True because it's a many-to-many field
+    # many=True because it's a many-to-many field
+    tags = TagSerializer(many=True, required=False)
     ingredients = IngredientSerializer(many=True, required=False)
 
     class Meta:
@@ -36,13 +39,13 @@ class RecipeSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'title', 'time_minutes', 'price', 'link', 'tags',
             'ingredients'
-        ] # tag is nested serializer, default is read only
+        ]  # tag is nested serializer, default is read only
         read_only_fields = ['id']
 
     def _get_or_create_tags(self, tags, recipe):
         """Handle getting or creatinhg tags as needed."""
         auth_user = self.context['request'].user
-        for tag in tags: # create nested tags field by hand
+        for tag in tags:  # create nested tags field by hand
             tab_obj, created = Tag.objects.get_or_create(
                 user=auth_user,
                 **tag,
@@ -63,9 +66,9 @@ class RecipeSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Create a recipe"""
         tags = validated_data.pop('tags', [])
-        ingredients = validated_data.pop('ingredients', []) # default is empty list
+        # default is empty list, if no tags provided
+        ingredients = validated_data.pop('ingredients', [])
         recipe = Recipe.objects.create(**validated_data)
-        auth_user = self.context['request'].user
         self._get_or_create_tags(tags, recipe)
         self._get_or_create_ingredients(ingredients, recipe)
 
@@ -79,11 +82,11 @@ class RecipeSerializer(serializers.ModelSerializer):
             instance.tags.clear()
             self._get_or_create_tags(tags, instance)
         if ingredients is not None:
-            instance.ingredients.clear() # clear all ingredients
+            instance.ingredients.clear()  # clear all ingredients
             self._get_or_create_ingredients(ingredients, instance)
 
         for attr, value in validated_data.items():
-            setattr(instance, attr, value) # set attribute on instance
+            setattr(instance, attr, value)  # set attribute on instance
 
         instance.save()
         return instance

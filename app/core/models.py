@@ -44,6 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "email"
 
+
 class Recipe(models.Model):
     """Recipe object."""
     user = models.ForeignKey(
@@ -62,6 +63,7 @@ class Recipe(models.Model):
         """Return string representation of the recipe."""
         return self.title
 
+
 class Tag(models.Model):
     """Tag for filtering recipes."""
     name = models.CharField(max_length=255)
@@ -72,6 +74,7 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Ingredient(models.Model):
     """Ingredient for recipes."""
